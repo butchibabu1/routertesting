@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="244cc589-1e05-4a24-b95e-1e0651bdab53" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="314e21e5-c970-4361-9b41-11220600d97a" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<flow name="routertestingFlow" doc:id="53d3252b-a567-4741-a8d4-331d16a6f506" >
+		<http:listener doc:name="Listener" doc:id="0097620b-ec30-4f02-9468-6524a7b02a51" config-ref="HTTP_Listener_config" path="/log"/>
+		<logger level="INFO" doc:name="Logger1" doc:id="8e5b2658-43d0-47a9-a659-dbb0e58c4131" message="hi"/>
+		<flow-ref doc:name="Flow Reference" doc:id="6069c7c8-f73e-4a0c-bf42-7f4c8b57ec82" name="routertestingFlow1"/>
+		<logger level="INFO" doc:name="Logger4" doc:id="388b5014-e3f8-4cfe-b300-c75832096006" message='"bye"'/>
+	</flow>
+	<flow name="routertestingFlow1" doc:id="b13a48b9-58d9-4e9c-89bd-351a7fc3e004" >
+		<logger level="INFO" doc:name="Logger2" doc:id="aa502013-990d-47ac-a790-fde781e45ce7" message="hello"/>
+		<http:request method="GET" doc:name="Request" doc:id="e4c6ee2e-e221-4310-bde0-5fb0a52d4b64" config-ref="HTTP_Request_configuration" path="/log1" />
+		<logger level="INFO" doc:name="Logger3" doc:id="614f304e-ff21-4e1a-a7d8-1f7c31bb7a02" message='#[payload]'/>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ba9660eb-6164-4139-a391-b5c53fc6e9b9" >
+				<set-variable value='#["gurram"]' doc:name="Set Variable" doc:id="6a023983-da0d-4dee-8528-136ec62e45e9" variableName="logs"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="routertestingFlow2" doc:id="7947f4e8-3cd3-40ce-8105-35787e16da65" >
+		<ee:cache doc:name="Cache" doc:id="9897c72e-d84d-4716-948b-d30362f5ac9b" />
+	</flow>
+	<flow name="routertestingFlow4" doc:id="3c169f1a-5b9e-40fd-b0f4-8e4cc99c363a" />
+	<sub-flow name="routertestingSub_Flow" doc:id="72d13102-4706-4c72-aff1-487625559885" />
+	<flow name="routertestingFlow3" doc:id="5e381b2a-8660-4d2c-ba09-9929a98bcf79" >
+		<foreach doc:name="For Each" doc:id="936f166a-bfbb-47c5-8157-42e024a6c1ee" />
+	</flow>
+	<flow name="routertestingFlow5" doc:id="7b13c093-6431-4974-9259-c1c34d1492a6" >
+		<os:retrieve doc:name="Retrieve" doc:id="d6e369a0-6a89-42c7-8162-05cc6baa9e72" />
+	</flow>
+	<flow name="routertestingFlow6" doc:id="76ba0aa1-c3c3-419a-92da-5fb9059ae7ca" >
+		<db:listener doc:name="On Table Row" doc:id="2894a908-56b6-4dcf-9996-816c914303d7">
+			<scheduling-strategy >
+				<cron />
+			</scheduling-strategy>
+		</db:listener>
+	</flow>
+</mule>
